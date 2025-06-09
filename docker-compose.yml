@@ -1,0 +1,95 @@
+services:
+    rabbitmq:
+        image: rabbitmq:3.9-management
+        ports:
+            - '5672:5672'
+            - '15672:15672'
+        networks:
+            - app-network
+
+    router-service:
+        build: ./router-service
+        ports:
+            - '3000:3000'
+        depends_on:
+            - rabbitmq
+            - user-service
+            - course-service
+            - tag-service
+            - lesson-service
+            - comment-service
+            - enrollment-service
+        networks:
+            - app-network
+
+    status-service:
+        build: ./status-service
+        ports:
+            - '3001:3001'
+        networks:
+            - app-network
+
+    user-service:
+        build: ./user-service
+        ports:
+            - '3002:3002'
+        depends_on:
+            - rabbitmq
+            - status-service
+        networks:
+            - app-network
+
+    course-service:
+        build: ./course-service
+        ports:
+            - '3003:3003'
+        depends_on:
+            - rabbitmq
+            - status-service
+            - tag-service
+        networks:
+            - app-network
+
+    tag-service:
+        build: ./tag-service
+        ports:
+            - '3004:3004'
+        depends_on:
+            - rabbitmq
+            - status-service
+        networks:
+            - app-network
+
+    lesson-service:
+        build: ./lesson-service
+        ports:
+            - '3005:3005'
+        depends_on:
+            - rabbitmq
+            - status-service
+        networks:
+            - app-network
+
+    comment-service:
+        build: ./comment-service
+        ports:
+            - '3006:3006'
+        depends_on:
+            - rabbitmq
+            - status-service
+        networks:
+            - app-network
+
+    enrollment-service:
+        build: ./enrollment-service
+        ports:
+            - '3007:3007'
+        depends_on:
+            - rabbitmq
+            - status-service
+        networks:
+            - app-network
+
+networks:
+    app-network:
+        driver: bridge
